@@ -11,6 +11,7 @@ class FractalClock
   constructor: ->
     @canvas = document.getElementById('clock')
     @context = @canvas.getContext('2d')
+    # @context.font = '24pt Helvetica'
 
     @bindResizeEvents()
 
@@ -60,6 +61,20 @@ class FractalClock
     @context.stroke()
     @context.closePath()
 
+    @context.beginPath()
+    @context.arc(0, 0, length, radians - .1, radians + .1, false)
+    @context.stroke()
+    @context.closePath()
+
+
+  drawNumber: (number, length, angle, size) ->
+    @context.save()
+    @context.font="#{size}pt Helvetica"
+    @context.translate(length * Math.cos(angle), length * Math.sin(angle))
+    @context.rotate(angle + @degreesToRadians(90))
+    @context.fillText(number, -25, 0)
+    @context.restore()
+
 
   degreesToRadians: (degrees) ->
     degrees * (Math.PI / 180)
@@ -79,12 +94,16 @@ class FractalClock
 
     radAngle = @degreesToRadians(secondHandAngle - 90)
     @maketifyHand(secHandLength, radAngle)
+    @drawNumber(@seconds, secHandLength, radAngle, 52)
 
     radAngle = @degreesToRadians(minuteHandAngle - 90)
     @maketifyHand(minHandLength, radAngle)
+    @drawNumber(@minutes, minHandLength, radAngle, 31)
 
     radAngle = @degreesToRadians(hourHandAngle - 90)
     @maketifyHand(hrHandLength, radAngle)
+    @drawNumber(@hours, hrHandLength, radAngle, 24)
+
 
 
 
