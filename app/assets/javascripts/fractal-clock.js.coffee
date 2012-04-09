@@ -15,7 +15,14 @@ class FractalClock
     @bindResizeEvents()
 
     @drawCanvas()
+    @setDefaults()
+
     @beginClock()
+
+
+  setDefaults: ->
+    @iterations = 14
+    @context.strokeStyle = '#fff'
 
 
   dimensions: ->
@@ -53,8 +60,8 @@ class FractalClock
 
   maketifyHand: (length, radians) ->
     @context.beginPath()
-    @context.moveTo(0, 0)
 
+    @context.moveTo 0, 0
     @context.lineTo(length * Math.cos(radians), length * Math.sin(radians))
 
     @context.stroke()
@@ -65,7 +72,7 @@ class FractalClock
     degrees * (Math.PI / 180)
 
 
-  drawClock: =>
+  drawClock: (iteration) =>
     @clear()
     @updateTime()
 
@@ -74,30 +81,49 @@ class FractalClock
     millisecondsPastMedian = (@hours * millisecondsPerHour) + millisecondsPastHour
 
     secondHandAngle = 360 * (millisecondsPastMinute / millisecondsPerMinute)
+    secondRadAngle  = @degreesToRadians(secondHandAngle - 90)
+
     minuteHandAngle = 360 * (millisecondsPastHour / millisecondsPerHour)
+    minuteRadAngle  = @degreesToRadians(minuteHandAngle - 90)
+
     hourHandAngle   = 360 * (millisecondsPastMedian / millisecondsPerMedian)
+    hourRadAngle    = @degreesToRadians(hourHandAngle - 90)
 
-    radAngle = @degreesToRadians(secondHandAngle - 90)
-    @maketifyHand(secHandLength, radAngle)
+    @context.save()
+    for iteration in [1..@iterations]
+      # cycle even / odd
+      sign = if((iteration % 2) == 0) then -1 else 1
 
-    radAngle = @degreesToRadians(minuteHandAngle - 90)
-    @maketifyHand(minHandLength, radAngle)
+      if iteration == 1
+        [x, y] = [0, 0]
+      else
+        switch(iteration % 3)
+          when 0
+            originRadians = secondRadAngle
+            originLength  = secHandLength
+          when 1
+            originRadians = minuteRadAngle
+            originLength  = minHandLength
+          else
+            originRadians = hourRadAngle
+            originLength  = hrHandLength
 
-    radAngle = @degreesToRadians(hourHandAngle - 90)
-    @maketifyHand(hrHandLength, radAngle)
+        x = originLength * Math.cos(originRadians)
+        y = originLength * Math.sin(originRadians)
 
+      @context.translate x, y
+      @context.rotate hourRadAngle
 
+      adjustedHrLength = hrHandLength - (iteration / @iterations)
+      adjustedMinLength = minHandLength - (iteration / @iterations)
+      adjustedSecLength = secHandLength - (iteration / @iterations)
 
+      @maketifyHand adjustedHrLength, hourRadAngle
+      @maketifyHand adjustedMinLength, minuteRadAngle
+      @maketifyHand adjustedSecLength, secondRadAngle
 
-
-
-
-
-
-
-
+    @context.restore()
 
 
 new FractalClock
-
 
