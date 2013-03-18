@@ -14,5 +14,3 @@ class App.SubClock extends App.Clock
     @context.rotate(App.degreesToRadians(@sourceHand.degrees() - 180))
     super
     @context.restore()
-
-  afterHandDrawn: -> # no-op
