@@ -1,5 +1,6 @@
 #= require 'clock/hand'
 #= require 'clock/hands'
+#= require 'clock/color'
 
 class App.Clock
 
@@ -17,7 +18,7 @@ class App.Clock
 
   setDefaults: ->
     @iterations = 4
-    @context.strokeStyle = '#000'
+    @context.strokeStyle = App.Color.random()
 
 
   dimensions: ->
