@@ -26,16 +26,9 @@ class App.Hand
     App.degreesToRadians(@degrees() - 90)
 
   draw: ->
-    @context.beginPath()
-
     @context.moveTo 0, 0
-    @context.lineTo(@boxWidth * @length * Math.cos(@radians()), @boxWidth * @length * Math.sin(@radians()))
-
-    @context.save()
     @context.strokeStyle = @color
-    @context.stroke()
-    @context.restore()
-    @context.closePath()
+    @context.lineTo(@boxWidth * @length * Math.cos(@radians()), @boxWidth * @length * Math.sin(@radians()))
 
   degrees: -> #no-op
     throw new ReferenceError('#degrees method is an abstract method. You must implement it yourself')

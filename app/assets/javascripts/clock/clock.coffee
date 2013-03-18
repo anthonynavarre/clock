@@ -14,13 +14,13 @@ class App.Clock
     @_drawSubClocks()
 
   _drawHands: ->
-    @context.save()
     currentScaleFactor = @boxWidth / App.Dimensions.startingBoxWidth()
     @context.lineWidth = currentScaleFactor * App.STARTING_HAND_WIDTH
     i = 0
     @hands = (new Hand(@context, @boxWidth, @colors[i++]) for Hand in @handClasses)
+    @context.beginPath()
     hand.draw() for hand in @hands
-    @context.restore()
+    @context.stroke()
 
   _drawSubClocks: ->
     return if @level >= App.NUMBER_OF_LEVELS
