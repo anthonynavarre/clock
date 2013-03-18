@@ -55,32 +55,8 @@ class App.Clock
     @addHand new App.HourHand(App.HR_HAND_LENGTH, @context)
 
 
-  addHand: (hand, iteration=1) ->
-    @context.save()
+  addHand: (hand) ->
     hand.draw()
-
-    if (iteration >= @iterations) || (hand instanceof App.HourHand)
-      @context.restore()
-      return
-
-    tmpHourHand = new App.HourHand(0)
-    endPoint = hand.endPoint()
-    @context.translate endPoint.x, endPoint.y
-    @context.rotate App.degreesToRadians(180 - (tmpHourHand.degrees() - hand.degrees()))
-
-    iteration++
-    for i in[iteration..@iterations]
-      adjustment = ((100 - i*3) / 100)
-
-      adjustedHrLength  = App.HR_HAND_LENGTH  * adjustment
-      adjustedMinLength = App.MIN_HAND_LENGTH * adjustment
-      adjustedSecLength = App.SEC_HAND_LENGTH * adjustment
-
-      @addHand(new App.SecondHand(adjustedSecLength, @context), i)
-      @addHand(new App.MinuteHand(adjustedMinLength, @context), i)
-      @addHand(new App.HourHand(adjustedHrLength, @context), i)
-
-    @context.restore()
 
 
 new App.Clock
