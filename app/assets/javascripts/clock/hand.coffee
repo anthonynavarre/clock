@@ -1,9 +1,8 @@
 class App.Hand
 
-  constructor: (context, boxWidth) ->
-    [@context, @boxWidth] = [context, boxWidth]
+  constructor: (context, boxWidth, color) ->
+    [@context, @boxWidth, @color] = [context, boxWidth, color]
 
-    @drawn = false
     @now = new Date()
     @milliseconds = @now.getMilliseconds()
     @seconds = @now.getSeconds()
@@ -32,9 +31,11 @@ class App.Hand
     @context.moveTo 0, 0
     @context.lineTo(@boxWidth * @length * Math.cos(@radians()), @boxWidth * @length * Math.sin(@radians()))
 
+    @context.save()
+    @context.strokeStyle = @color
     @context.stroke()
+    @context.restore()
     @context.closePath()
-    @drawn = true
 
   degrees: -> #no-op
     throw new ReferenceError('#degrees method is an abstract method. You must implement it yourself')

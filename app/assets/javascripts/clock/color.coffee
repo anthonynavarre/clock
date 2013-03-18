@@ -10,3 +10,12 @@ class App.Color
   @random: ->
     rgb = (@randomColorComponent() for i in [1..3]).join('')
     "##{rgb}"
+
+  @darkGray: ->
+    "#333"
+
+  @gray: ->
+    "#888"
+
+  @black: ->
+    "#000"

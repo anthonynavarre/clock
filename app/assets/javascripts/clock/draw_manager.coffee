@@ -1,55 +1,60 @@
+#= require 'clock/dimensions'
 #= require 'clock/hand'
 #= require 'clock/hands'
 #= require 'clock/color'
 #= require 'clock/clock'
+#= require 'clock/sub_clock'
+#= require 'clock/number_clock'
 
 class App.DrawManager
 
-  _getDimensions = ->
-    x: document.documentElement.clientWidth - 8
-    y: document.documentElement.clientHeight - 20
+  colors: (App.Color.random() for __ in [1..3])
 
-  _getBoxWidth = ->
-    dimensions = _getDimensions()
-    # See which dim is bigger - width or height - and return half of that. This
-    # will get us the max radius of our viewport
-    maxViewportRadius = Math.min(dimensions.x, dimensions.y) / 2
-    # Make the clock slightly smaller than the viewport
-    Math.round(maxViewportRadius * 0.66)
-
-  constructor: ->
-    @canvas = document.getElementById('clock')
+  constructor: (drawOnce=false) ->
+    @canvas  = document.getElementById('clock')
     @context = @canvas.getContext('2d')
 
     @bindEvents()
     @redraw()
     @setup()
 
-    setInterval @drawCanvas.bind(@), 25
+    if drawOnce
+      @drawCanvas()
+    else
+      @start()
 
 
   setup: ->
-    @context.strokeStyle = App.Color.random()
+    @context.lineCap = "round"
+    @context.lineWidth = App.STARTING_HAND_WIDTH
 
 
   bindEvents: ->
     window.onresize = @redraw.bind(@)
 
 
+  start: ->
+    @interval = setInterval @drawCanvas.bind(@), 1000 / App.FRAMERATE
+
+
   redraw: ->
-    dimensions = _getDimensions()
+    clearInterval @interval
+    dimensions = App.Dimensions.getDimensions()
     @canvas.setAttribute('width', dimensions.x)
     @canvas.setAttribute('height', dimensions.y)
     @context.translate(dimensions.x / 2, dimensions.y / 2)
+    @setup()
+    @start()
 
 
   drawCanvas: ->
     @clear()
-    new App.Clock(@context, _getBoxWidth()).draw()
+    new App.Clock(@context, App.Dimensions.startingBoxWidth(), @colors).draw()
+    new App.NumberClock(@context, @colors).draw()
 
 
   clear: ->
     @context.clearRect -(@canvas.width / 2), -(@canvas.height / 2), @canvas.width, @canvas.height
 
 
-new App.DrawManager()
+new App.DrawManager
