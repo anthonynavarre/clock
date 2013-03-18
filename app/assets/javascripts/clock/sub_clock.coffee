@@ -12,7 +12,7 @@ class App.SubClock extends App.Clock
     @context.save()
     @context.translate(@sourceHand.endPoint().x, @sourceHand.endPoint().y)
     @context.rotate(App.degreesToRadians(@sourceHand.degrees() - 180))
-    @context.strokeStyle = @sourceHand.color
-    @_drawHands()
-    @_drawSubClocks()
+    super
     @context.restore()
+
+  afterHandDrawn: -> # no-op
