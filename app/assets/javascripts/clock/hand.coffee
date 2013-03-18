@@ -1,10 +1,9 @@
 class App.Hand
 
-  constructor: (length, context) ->
-    @drawn = false
-    @length = length
-    @context = context
+  constructor: (context, boxWidth) ->
+    [@context, @boxWidth] = [context, boxWidth]
 
+    @drawn = false
     @now = new Date()
     @milliseconds = @now.getMilliseconds()
     @seconds = @now.getSeconds()
@@ -21,8 +20,8 @@ class App.Hand
     (@hours * App.MILLISECONDS_PER_HOUR) + @millisecondsPastHour()
 
   endPoint: ->
-    x: @length * Math.cos(@radians())
-    y: @length * Math.sin(@radians())
+    x: @boxWidth * @length * Math.cos(@radians())
+    y: @boxWidth * @length * Math.sin(@radians())
 
   radians: ->
     App.degreesToRadians(@degrees() - 90)
@@ -31,7 +30,7 @@ class App.Hand
     @context.beginPath()
 
     @context.moveTo 0, 0
-    @context.lineTo(@length * Math.cos(@radians()), @length * Math.sin(@radians()))
+    @context.lineTo(@boxWidth * @length * Math.cos(@radians()), @boxWidth * @length * Math.sin(@radians()))
 
     @context.stroke()
     @context.closePath()

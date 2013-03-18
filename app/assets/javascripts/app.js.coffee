@@ -1,4 +1,4 @@
 # JS Manifest
 #
 #= require 'constants'
-#= require 'clock'
+#= require 'clock/draw_manager'
