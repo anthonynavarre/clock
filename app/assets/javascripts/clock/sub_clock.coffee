@@ -6,7 +6,7 @@ class App.SubClock extends App.Clock
     [@sourceHand, @level] = [sourceHand, level]
     super
 
-  handClasses: [App.MinuteHand, App.HourHand]
+  handClasses: [App.SecondHand, App.HourHand]
 
   draw: ->
     @context.save()
