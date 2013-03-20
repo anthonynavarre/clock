@@ -1,4 +1,5 @@
 # JS Manifest
 #
-# = require 'fractal-clock'
-
+#= require 'stats'
+#= require 'constants'
+#= require 'clock/draw_manager'
