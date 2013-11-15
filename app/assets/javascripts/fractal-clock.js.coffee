@@ -4,14 +4,21 @@ millisecondsPerMinute = 60000 # 60*1000
 millisecondsPerSecond = 1000
 
 class FractalClock
-  secHandLength = 260
-  minHandLength = 250
-  hrHandLength = 150
+  secHandLength = 300
+  minHandLength = 230
+  hrHandLength = 160
 
   constructor: ->
     @canvas = document.getElementById('clock')
     @context = @canvas.getContext('2d')
-    # @context.font = '24pt Helvetica'
+    @timeDisplay = new TimeDisplay(@context)
+    @animatedNumber = new AnimatedNumber(@context)
+
+    @animatedNumbers = {
+      seconds: new AnimatedNumber(@context)
+      minutes: new AnimatedNumber(@context)
+      hours: new AnimatedNumber(@context)
+    }
 
     @bindResizeEvents()
 
@@ -62,17 +69,16 @@ class FractalClock
     @context.closePath()
 
     @context.beginPath()
-    @context.arc(0, 0, length, radians - .1, radians + .1, false)
+    @context.arc(0, 0, length, radians - .1, radians + .5, false)
     @context.stroke()
     @context.closePath()
 
 
-  drawNumber: (number, length, angle, size) ->
+  drawNumber: (number, length, angle, type) ->
     @context.save()
-    @context.font="#{size}pt Helvetica"
     @context.translate(length * Math.cos(angle), length * Math.sin(angle))
     @context.rotate(angle + @degreesToRadians(90))
-    @context.fillText(number, -25, 0)
+    @animatedNumbers[type].drawNumber(number, type != 'hours')
     @context.restore()
 
 
@@ -84,6 +90,12 @@ class FractalClock
     @clear()
     @updateTime()
 
+    @context.save()
+    @context.translate(-(@dimensions().x / 2) + 200, -(@dimensions().y / 2) + 100)
+    #@timeDisplay.draw()
+    #@animatedNumber.drawNumber(@seconds)
+    @context.restore()
+
     millisecondsPastMinute = (@seconds * millisecondsPerSecond) + @milliseconds
     millisecondsPastHour   = (@minutes * millisecondsPerMinute) + millisecondsPastMinute
     millisecondsPastMedian = (@hours * millisecondsPerHour) + millisecondsPastHour
@@ -92,31 +104,16 @@ class FractalClock
     minuteHandAngle = 360 * (millisecondsPastHour / millisecondsPerHour)
     hourHandAngle   = 360 * (millisecondsPastMedian / millisecondsPerMedian)
 
-    radAngle = @degreesToRadians(secondHandAngle - 90)
-    @maketifyHand(secHandLength, radAngle)
-    @drawNumber(@seconds, secHandLength, radAngle, 52)
+    secondsRadAngle = @degreesToRadians(secondHandAngle - 90)
+    minutesRadAngle = @degreesToRadians(minuteHandAngle - 90)
+    hrRadAngle = @degreesToRadians(hourHandAngle - 90)
 
-    radAngle = @degreesToRadians(minuteHandAngle - 90)
-    @maketifyHand(minHandLength, radAngle)
-    @drawNumber(@minutes, minHandLength, radAngle, 31)
+    @drawNumber(@hours, hrHandLength, hrRadAngle, 'hours')
+    @drawNumber(@minutes, minHandLength, minutesRadAngle, 'minutes')
+    @drawNumber(@seconds, secHandLength, secondsRadAngle, 'seconds')
 
-    radAngle = @degreesToRadians(hourHandAngle - 90)
-    @maketifyHand(hrHandLength, radAngle)
-    @drawNumber(@hours, hrHandLength, radAngle, 24)
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @maketifyHand(secHandLength, secondsRadAngle)
+    @maketifyHand(minHandLength, minutesRadAngle)
+    @maketifyHand(hrHandLength, hrRadAngle)
 
 new FractalClock
-
-
